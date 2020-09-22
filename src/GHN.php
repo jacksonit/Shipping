@@ -12,13 +12,6 @@ class GHN
     public $token           = '';
     public $shop_id         = '';
 
-    public $service_id = [
-        53319 => 1,
-        53320 => 2,
-        53330 => 3,
-        53321 => 4
-    ];
-
     /**
      * Create new
      *
@@ -75,13 +68,13 @@ class GHN
         {
             $validator = Validator::make($data, [
                 'from_district_id'  => 'required',
-                'from_ward_code'    => 'required',
+                'from_ward_code'    => 'nullable|string',
                 'to_district_id'    => 'required',
-                'to_ward_code'      => 'required',
+                'to_ward_code'      => 'nullable|string',
                 'weight'            => 'required',
-                'height'            => 'required',
-                'length'            => 'required',
-                'width'             => 'required',
+                'height'            => 'nullable',
+                'length'            => 'nullable',
+                'width'             => 'nullable',
                 'coupon'            => 'nullable|string',
             ]);
 
@@ -98,9 +91,9 @@ class GHN
                     'service_id'        => null,
                     'service_type_id'   => 2,
                     'from_district_id'  => (int) $data['from_district_id'],
-                    'from_ward_code'    => (int) $data['from_ward_code'],
+                    'from_ward_code'    => (string) $data['from_ward_code'],
                     'to_district_id'    => (int) $data['to_district_id'],
-                    'to_ward_code'      => (int) $data['to_ward_code'],
+                    'to_ward_code'      => (string) $data['to_ward_code'],
                     'weight'            => (int) $data['weight'],
                     'height'            => (int) $data['height'],
                     'length'            => (int) $data['length'],
@@ -113,9 +106,7 @@ class GHN
 
             if(empty($records) || $records->code != 200 || $records->message != 'Success') throw new \Exception('GHN Error');
 
-            return ['result'=> 'OK', 'records' => ['total' => $records->data->total, 'service_fee' => $records->data->service_fee, 'coupon_value' => $value->data->coupon_value]];
-
-            return ['result'=> 'NG', 'message' => 'Không tìm thấy giá vận chuyển trên GHN'];
+            return ['result'=> 'OK', 'records' => ['total' => $records->data->total, 'service_fee' => $records->data->service_fee, 'coupon_value' => $records->data->coupon_value]];
         } catch (\Exception $e) {
             return ['result'=> 'NG', 'message' => $e->getMessage()];
         }
@@ -213,12 +204,11 @@ class GHN
             }
 
             $client = new Client([
-                'headers' => [ 'Content-Type' => 'application/json', 'token' => $this->token ]
+                'headers' => [ 'Content-Type' => 'application/json', 'token' => $this->token, 'ShopId' => $this->shop_id]
             ]);
 
             $data = [
-                'shop_id'         => $this->shop_id,
-                "order_codes"     => (string) $data['order_code']
+                "order_codes"     => [(string) $data['order_code']]
             ];
 
             $response = $client->post($this->url . '/v2/switch-status/cancel', ['body' => json_encode($data)]);
