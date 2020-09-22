@@ -1,0 +1,28 @@
+{
+    "name": "jacksonit/shipping",
+    "description": "Shipping Việt Nam Laravel",
+    "license": "MIT",
+    "keywords": ["laravel", "ghn", "jacksonit"],
+    "authors": [
+        {
+            "name": "Cao Son",
+            "email": "jacksonit.org@gmail.com",
+            "homepage": "https://jacksonit.org"
+        }
+    ],
+    "require": {
+        "php": ">=5.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "Jacksonit\\Shipping\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Jacksonit\\Shipping\\ShippingServiceProvider"
+            ]
+        }
+    }
+}
